@@ -1,5 +1,5 @@
-require("pouya.set")
-require("pouya.remap")
+require("pouya.options")
+require("pouya.keymaps")
 
 ---------- don't know about things below -------------
 -- local augroup = vim.api.nvim_create_augroup

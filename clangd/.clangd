@@ -1,0 +1,15 @@
+ CompileFlags:
+  Add: 
+    - -std=c++20
+    - -Wall
+    - -Wno-sign-compare
+    - -Wno-unused-variable
+    - -Wno-unused-parameter
+    - -Wno-attributes
+
+Diagnostics:
+  Suppress: 
+    - "main"              # stop whining about int32_t main
+    - "pp_including_mainfile" # stop whining about <bits/stdc++.h>
+    - "redundant-decls"
+

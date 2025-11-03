@@ -85,6 +85,7 @@ return packer.startup(function(use)
     -- Snippets
     use {'L3MON4D3/LuaSnip'}
 
+    -------------------- syntax check --------------------
     use "neovim/nvim-lspconfig"
     use "williamboman/nvim-lsp-installer"
 
@@ -97,5 +98,6 @@ return packer.startup(function(use)
         requires = 'MunifTanjim/nui.nvim',
         config = function() require('competitest').setup() end
     }
+
 
 end)

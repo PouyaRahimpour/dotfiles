@@ -47,12 +47,12 @@ require('competitest').setup {
 			toggle_diff = { "d", "D" },
 			close = { "q", "Q" },
 		},
-		viewer = {
+		mappings = {
 			width = 0.5,
 			height = 0.5,
 			show_nu = false, -- default true
 			show_rnu = false,
-			close_mappings = { "q", "Q" },
+			close = { "q", "Q" },
 		},
 	},
 	popup_ui = {
