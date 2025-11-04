@@ -1,6 +1,6 @@
 export TERM="xterm-256color"
 # I added this for my custom commands
-source ~/.my_commands.sh
+# source ~/.my_commands.sh
 
 source ~/.profile
 
@@ -129,7 +129,7 @@ alias v="nvim"
 alias vim="nvim"
 alias poc="pokemon-colorscripts -r"
 alias anim="anime-colorscripts -r"
-poc
+# poc
 
 
 # eza aliases

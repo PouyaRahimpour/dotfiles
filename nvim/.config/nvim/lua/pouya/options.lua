@@ -32,8 +32,8 @@ local options = {
     termguicolors = true,
     --vim.opt.swapfile = false
     --vim.opt.backup = false
-    undodir = os.getenv("HOME") .. "/.vim/undodir",
-    undofile = true
+    undofile = true,
+    undodir = os.getenv("HOME") .. "/.vim/undodir"
 }
 for k, v in pairs(options) do
     vim.opt[k] = v
