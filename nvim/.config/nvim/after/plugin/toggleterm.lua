@@ -44,7 +44,7 @@ CXXFLAGS = "-std=c++20 -O2 -Wall -pedantic -Wshadow -Wformat=2 -Wfloat-equal -Wc
 --DEBUG_CXXFLAGS1 = "-fsanitize=address -fsanitize=undefined -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow -fno-sanitize-recover=all -fstack-protector-all -D_FORTIFY_SOURCE=2"
 DEBUG_CXXFLAGS1 = ""
 DEBUG_CXXFLAGS2 = "-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
-vim.keymap.set({"n", "v"}, "<leader>3", ":w<cr>:TermExec cmd='g++ -ggdb -DDEBUG " .. CXXFLAGS .. " " .. DEBUG_CXXFLAGS1 .. " " .. DEBUG_CXXFLAGS2 .. " %:~ -o %:p:r && %:~:r < %:~:h/inp'<cr>")
+vim.keymap.set({"n", "v"}, "<leader>3", ":w<cr>:TermExec cmd='g++ -ggdb -DLOCAL " .. CXXFLAGS .. " " .. DEBUG_CXXFLAGS1 .. " " .. DEBUG_CXXFLAGS2 .. " %:~ -o %:p:r && %:~:r < %:~:h/inp'<cr>")
 
 
 function _G.set_terminal_keymaps()

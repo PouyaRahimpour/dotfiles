@@ -8,6 +8,7 @@
     - -Wno-unused-variable
     - -Wno-unused-parameter
     - -Wno-attributes
+    - -DLOCAL
 
 Diagnostics:
   Suppress: 

@@ -26,8 +26,9 @@ ls.add_snippets("cpp", {
             "using ld = long double;",
             "#define TESTCASE",
             "//#define TIME",
-            "#ifdef DEBUG",
-            "#include \"/home/pouya/dev/cp/lib/debug.cpp\"",
+            "#define DEBUG",
+            "#ifdef LOCAL",
+            "#include \"/home/pouya/dev/cp/lib/local.cpp\"",
             "#else",
             "#define dbg(...)",
             "#define Solve solve",
@@ -36,7 +37,7 @@ ls.add_snippets("cpp", {
             "", "",
         }),
 
-        t({ "void solve(int tc) {", "\t"}),
+        t({ "void solve([[ maybe_unused ]] int tc) {", "\t"}),
         i(1, "//code here"),
         t({"", "}", "", ""}),
 

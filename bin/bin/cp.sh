@@ -32,19 +32,19 @@ function test_checker {
       echo "$name.cpp file does not exist."
       return
     fi
-    g++ $name.cpp -o $name
+    g++ -std=c++20 -DLOCAL $name.cpp -o $name
 
     if ! [ -f ./$name.gen.cpp ]; then
       echo "Generator file does not exist."
       return
     fi
-    g++ $name.gen.cpp -o gen
+    g++ -std=c++20 -DLOCAL $name.gen.cpp -o gen
 
     if ! [ -f ./$name.checker.cpp ]; then
       echo "Checker file does not exist."
       return
     fi
-    g++ $name.checker.cpp -o ch
+    g++ -std=c++20 -DLOCAL $name.checker.cpp -o ch
     
     for (( i=1; ; ++i )); do
         ./gen $i > $name.in
@@ -61,19 +61,19 @@ function test_diff {
       echo "$name.cpp file does not exist."
       return
     fi
-    g++ $name.cpp -o $name
+    g++ -std=c++20 -DLOCAL $name.cpp -o $name
 
     if ! [ -f ./$name.gen.cpp ]; then
       echo "Generator file does not exist."
       return
     fi
-    g++ $name.gen.cpp -o gen
+    g++ -std=c++20 -DLOCAL $name.gen.cpp -o gen
 
     if ! [ -f ./$name.bf.cpp ]; then
       echo "Bruteforce file does not exist."
       return
     fi
-    g++ $name.bf.cpp -o bf
+    g++ -std=c++20 -DLOCAL $name.bf.cpp -o bf
 
     for (( i=1; ; ++i )); do
         ./gen $i > $name.in
