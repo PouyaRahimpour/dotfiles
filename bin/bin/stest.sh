@@ -60,25 +60,26 @@ function __test_checker() (
 function __test_diff() (
     #set -e
     local name=$1
+    local compile_falgs="-std=c++20 -I/home/pouya/dev/cp/lib"
     touch $name.in $name.out $name.bf.out
     
     if ! [ -f ./$name.cpp ]; then
       echo "$name.cpp file does not exist."
       return 1
     fi
-    g++ $name.cpp -o $name
+    g++ compile_flags $name.cpp -o $name
 
     if ! [ -f ./$name.gen.cpp ]; then
       echo "Generator file does not exist."
       return 1
     fi
-    g++ $name.gen.cpp -o gen
+    g++ compile_flags $name.gen.cpp -o gen
 
     if ! [ -f ./$name.bf.cpp ]; then
       echo "Bruteforce file does not exist."
       return 1
     fi
-    g++ $name.bf.cpp -o bf
+    g++ compile_flags $name.bf.cpp -o bf
 
     for (( i=1; ; ++i )); do
         ./gen $i > $name.in

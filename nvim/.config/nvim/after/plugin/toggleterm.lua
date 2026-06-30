@@ -40,7 +40,7 @@ vim.keymap.set({"n", "v"}, "<leader>4", ":TermExec cmd='python3 -m IPython'<cr>"
 --DEBUG_CXXFLAGS2 = "-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
 
 -- just removed -Wextra
-CXXFLAGS = "-std=c++20 -O2 -Wall -pedantic -Wshadow -Wformat=2 -Wfloat-equal -Wconversion -Wlogical-op -Wshift-overflow=2 -Wduplicated-cond -Wcast-qual -Wcast-align -Wno-unused-result -Wno-sign-conversion"
+CXXFLAGS = "-std=c++20 -O2 -Wall -pedantic -Wshadow -Wformat=2 -Wfloat-equal -Wconversion -Wlogical-op -Wshift-overflow=2 -Wduplicated-cond -Wcast-qual -Wcast-align -Wno-unused-result -Wno-sign-conversion -I$HOME/dev/cp/lib"
 --DEBUG_CXXFLAGS1 = "-fsanitize=address -fsanitize=undefined -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow -fno-sanitize-recover=all -fstack-protector-all -D_FORTIFY_SOURCE=2"
 DEBUG_CXXFLAGS1 = ""
 DEBUG_CXXFLAGS2 = "-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
