@@ -16,3 +16,4 @@ secrets/
 
 nvim/.config/nvim/plugin/packer_compiled.lua
 vim/.vim/undodir/*
+vim/.vim/plugged/vim-snippets
