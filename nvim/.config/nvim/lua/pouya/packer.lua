@@ -33,24 +33,24 @@ return packer.startup(function(use)
     ------------ colorschemes ----------------
     use({ "ellisonleao/gruvbox.nvim" })
     use({ "doums/darcula" })
-    use({
-        "loctvl842/monokai-pro.nvim",
-        config = function()
-            require("monokai-pro").setup()
-        end
-    })
+    --use({
+        --"loctvl842/monokai-pro.nvim",
+        --config = function()
+            --require("monokai-pro").setup()
+        --end
+    --})
 
-    use({
-        'morhetz/gruvbox',
-        config = function()
-            vim.cmd.colorscheme("gruvbox")
-        end
-    })
+    --use({
+        --'morhetz/gruvbox',
+        --config = function()
+            --vim.cmd.colorscheme("gruvbox")
+        --end
+    --})
 
-    use({
-        'rose-pine/neovim',
-        as = 'rose-pine',
-    })
+    --use({
+        --'rose-pine/neovim',
+        --as = 'rose-pine',
+    --})
     use({
         'RRethy/nvim-base16',
         as ='base16-colors',
