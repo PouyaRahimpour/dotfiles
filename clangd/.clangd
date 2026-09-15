@@ -1,8 +1,8 @@
  CompileFlags:
   Add: 
     - -std=c++20
-    - -I/usr/include/c++/11
-    - -I/usr/include/x86_64-linux-gnu/c++/11
+    - -I/usr/include/c++/13
+    - -I/usr/include/x86_64-linux-gnu/c++/13
     - -I/home/pouya/dev/cp/lib/poco-library
     - -I/home/pouya/dev/cp/lib/ac-library
     - -Wall
@@ -14,7 +14,5 @@
 
 Diagnostics:
   Suppress: 
-    - "main"              # stop whining about int32_t main
-    - "pp_including_mainfile" # stop whining about <bits/stdc++.h>
-    - "redundant-decls"
+    - pp_file_not_found
 
