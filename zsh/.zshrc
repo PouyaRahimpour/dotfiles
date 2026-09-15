@@ -3,6 +3,7 @@ export TERM="xterm-256color"
 # source ~/.my_commands.sh
 
 source ~/.profile
+source ~/bin/cp.sh
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
@@ -129,6 +130,7 @@ alias v="nvim"
 alias vim="nvim"
 alias poc="pokemon-colorscripts -r"
 alias anim="anime-colorscripts -r"
+alias clip="xclip -selection clipboard"
 # poc
 
 
@@ -146,3 +148,20 @@ alias lt='eza --tree $eza_params'
 alias tree='eza --tree $eza_params'
 export PATH=/usr/local/cuda-12.1/bin:$PATH
 export LD_LIBRARY_PATH=/usr/local/cuda-12.1/lib64:$LD_LIBRARY_PATH
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/pouya/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/pouya/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/pouya/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/pouya/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+export PATH=/usr/local/texlive/2026/bin/x86_64-linux:$PATH

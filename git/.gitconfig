@@ -3,3 +3,5 @@
 	name = Pouya Rahimpour
 [init]
 	defaultBranch = main
+[pull]
+	rebase = true
