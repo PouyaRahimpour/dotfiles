@@ -31,6 +31,7 @@ toggleterm.setup({
 	},
 })
 
+-------------- for CP ---------------
 --vim.keymap.set({"n", "v"}, "<leader>3", ":w<cr>:TermExec cmd='g++ -ggdb -std=c++20 -DDEBUG -O2 %:~ -o %:p:r && %:~:r < %:~:h/inp'<cr>")
 vim.keymap.set({"n", "v"}, "<leader>4", ":TermExec cmd='python3 -m IPython'<cr>")
 
@@ -40,7 +41,6 @@ vim.keymap.set({"n", "v"}, "<leader>4", ":TermExec cmd='python3 -m IPython'<cr>"
 --DEBUG_CXXFLAGS2 = "-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
 
 local CPLIB = os.getenv("HOME").."/dev/cp/lib"
-
 local CXXFLAGS = table.concat({
     "-std=c++20",
     "-O2",
@@ -58,23 +58,21 @@ local CXXFLAGS = table.concat({
     "-Wcast-align",
     "-Wno-unused-result",
     "-Wno-sign-conversion",
-    "-I" .. CPLIB .. "/poco-library",
-    "-I" .. CPLIB .. "/ac-library",
+    "-I" .. CPLIB,
 }, " ")
-
-local DEBUG_CXXFLAGS1 = ""
-local DEBUG_CXXFLAGS2 = table.concat({
+local DEBUG_CXXFLAGS = table.concat({
     "-D_GLIBCXX_DEBUG",
     "-D_GLIBCXX_DEBUG_PEDANTIC",
 }, " ")
-
 vim.keymap.set({"n", "v"}, "<leader>3",
-    ":w<cr>:TermExec cmd='g++ -ggdb -DLOCAL "
+    ":w<cr>"
+    ..":! python3 "..CPLIB.."/expander.py --lib "..CPLIB.." %:~<cr>"
+    ..":TermExec cmd='g++ -ggdb -DLOCAL "
     .. CXXFLAGS .. " "
-    .. DEBUG_CXXFLAGS1 .. " "
-    .. DEBUG_CXXFLAGS2
+    .. DEBUG_CXXFLAGS
     .. " %:~ -o %:p:r && %:~:r < %:~:h/inp'<cr>"
 )
+-------------------------------------
 
 function _G.set_terminal_keymaps()
   local opts = {buffer = 0}

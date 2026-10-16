@@ -28,7 +28,7 @@ ls.add_snippets("cpp", {
             "//#define TIME",
             "#define DEBUG",
             "#ifdef LOCAL",
-            "#include \"local.h\"",
+            "#include \"local.hpp\"",
             "#else",
             "#define dbg(...)",
             "#define Solve solve",

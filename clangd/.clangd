@@ -1,10 +1,9 @@
  CompileFlags:
   Add: 
-    - -std=c++20
-    - -I/usr/include/c++/13
-    - -I/usr/include/x86_64-linux-gnu/c++/13
-    - -I/home/pouya/dev/cp/lib/poco-library
-    - -I/home/pouya/dev/cp/lib/ac-library
+    - -std=c++23
+    - -I/usr/include/c++/15
+    - -I/usr/include/x86_64-linux-gnu/c++/15
+    - -I/home/pouya/dev/cp/lib/
     - -Wall
     - -Wno-sign-compare
     - -Wno-unused-variable

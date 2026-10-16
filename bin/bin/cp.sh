@@ -35,9 +35,9 @@
 CP_LIB="/home/pouya/dev/cp/lib"
 
 CP_FLAGS=(
-    -std=c++20
+    -std=c++23
     -DLOCAL
-    "-I$CP_LIB/poco-library"
+    -I$CP_LIB
 )
 
 
@@ -45,8 +45,7 @@ CP_FLAGS=(
 # atcoder-library code expansion
 # ============================================================
 function expand {
-    local loc="$CP_LIB/ac-library"
-    $loc/expander.py -c --lib $loc $1 | clip
+    $CP_LIB/expander.py -c --lib $CP_LIB $1 | clip
 }
 
 # ============================================================
