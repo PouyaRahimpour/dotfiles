@@ -1,69 +1,37 @@
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
-local function map(mode, x, y)
-    vim.keymap.set(mode, x, y)
-end
-local maps = {
-    {"n", "<leader>e", ":Lex<cr>"},
-    {"n", "<leader>q", ":q<cr>"},
+local map = vim.keymap.set
 
-    -- motions
-    {"n", "<c-h>", "<c-w>h"},
-    {"n", "<c-l>", "<c-w>l"},
-    {"n", "<c-k>", "<c-w>k"},
-    {"n", "<c-j>", "<c-w>j"},
+-- General
+map("n", "<leader>q", "<cmd>q<CR>", { desc = "Quit window" })
+map({ "i", "v", "c" }, "jk", "<Esc>", { desc = "Escape" })
+map("n", "<leader>e", "<cmd>Lex<CR>", { desc = "Open netrw file explorer" })
 
-    -- resize splits
-    {"n", "<c-up>", ":resize -2<cr>"},
-    {"n", "<c-down>", ":resize +2<cr>"},
-    {"n", "<c-left>", ":vertical resize -2<cr>"},
-    {"n", "<c-right>", ":vertical resize +2<cr>"},
+-- Window navigation
+map("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
+map("n", "<C-j>", "<C-w>j", { desc = "Move to lower window" })
+map("n", "<C-k>", "<C-w>k", { desc = "Move to upper window" })
+map("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
 
-    {{"i", "v", "c"}, "jk", "<esc>"},
+-- Resize splits
+map("n", "<C-Up>", "<cmd>resize -2<CR>", { desc = "Decrease window height" })
+map("n", "<C-Down>", "<cmd>resize +2<CR>", { desc = "Increase window height" })
+map("n", "<C-Left>", "<cmd>vertical resize -2<CR>", { desc = "Decrease window width" })
+map("n", "<C-Right>", "<cmd>vertical resize +2<CR>", { desc = "Increase window width" })
 
-    -- move btw tabs?
-    {"n", "<s-l>", ":bnext<cr>"},
-    {"n", "<s-h>", ":bprevious<cr>"},
+-- Buffers
+map("n", "<S-l>", "<cmd>bnext<CR>", { desc = "Next buffer" })
+map("n", "<S-h>", "<cmd>bprevious<CR>", { desc = "Previous buffer" })
 
-    {"v", "J", ":m '>+1<CR>gv=gv"},
-    {"v", "K", ":m '<-2<CR>gv=gv"},
+-- Editing
+map("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
+map("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
+map("v", "p", [=["_dP]=], { desc = "Paste without replacing register" })
+map({ "n", "v" }, "<leader>d", [=["_d]=], { desc = "Delete without yanking" })
 
-    {"v", "p", [["_dP]]},
-    {{"n", "v"}, "<leader>y", [["+y]]},
+-- System clipboard
+map({ "n", "v" }, "<leader>y", [=["+y]=], { desc = "Yank to system clipboard" })
+map("n", "<leader>Y", [=["+Y]=], { desc = "Yank line to system clipboard" })
 
-    --{"n", "<leader>3", "<cmd>w<cr><cmd>vert bel term g++ -ggdb -std=c++17 -DLOCAL -O2 %:~ -o %:p:r && %:~:r < %:~:h/inp <CR>"}
-}
-for i, v in pairs(maps) do
-    map(v[1], v[2], v[3])
-end
-
---vim.api.nvim_create_user_command(
-    --"Cptmp",
-    --"!cat ~/cptmp1.cpp> %",
-    --{ nargs = 0}
---)
-
--------------------- don't know about these things below --------------
-
---map("n", "J", "mzJ`z")
---map("n", "<C-d>", "<C-d>zz")
---map("n", "<C-u>", "<C-u>zz")
---map("n", "n", "nzzzv")
---map("n", "N", "Nzzzv")
-
-map("n", "<leader>Y", [["+Y]])
-map({"n", "v"}, "<leader>d", [["_d]])
-
---map("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
---map("n", "<leader>f", vim.lsp.buf.format)
-
---map("n", "<C-k>", "<cmd>cnext<CR>zz")
---map("n", "<C-j>", "<cmd>cprev<CR>zz")
---map("n", "<leader>k", "<cmd>lnext<CR>zz")
---map("n", "<leader>j", "<cmd>lprev<CR>zz")
-
-map("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
--- map("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
--- map("n", "<leader>vpp", "<cmd>e ~/.config/nvim/lua/pouya/remap.lua<CR>");
--- map("n", "<leader>mr", "<cmd>CellularAutomaton make_it_rain<CR>");
-
+-- Substitute the word under the cursor throughout the current buffer.
+map("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], {
+    desc = "Substitute word under cursor",
+})
