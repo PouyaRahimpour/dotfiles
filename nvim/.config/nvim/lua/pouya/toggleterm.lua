@@ -96,11 +96,11 @@ local function compile_and_run_cpp(mode)
 
     -- TESTCASE deliberately remains source-controlled; only DEBUG/TIME vary by mapping.
     if mode == "time" then
-        vim.list_extend(compile_args, { "-DDEBUG", "-DTIME" })
+        vim.list_extend(compile_args, { "-DTESTCASE", "-DDEBUG", "-DTIME" })
     elseif mode == "normal" then
-        vim.list_extend(compile_args, { "-UDEBUG", "-UTIME" })
+        vim.list_extend(compile_args, { "-DTESTCASE", "-UDEBUG", "-UTIME" })
     else -- default debug mode (<leader>3)
-        vim.list_extend(compile_args, { "-UTIME", "-DDEBUG" })
+        vim.list_extend(compile_args, { "-DTESTCASE", "-UTIME", "-DDEBUG" })
     end
 
     vim.list_extend(compile_args, { source, "-o", output })
