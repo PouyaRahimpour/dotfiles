@@ -1,0 +1,210 @@
+#!/usr/bin/env python3
+"""Receive Competitive Companion samples and write a normalized <stem>.in."""
+
+import argparse
+import json
+import re
+import sys
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from pathlib import Path
+from urllib.parse import urlparse
+
+PORT = 10043
+MAX_BODY = 8 * 1024 * 1024
+
+
+def safe_name(value):
+    value = re.sub(r"[^A-Za-z0-9_-]+", "_", value).strip("_-")
+    return value or "problem"
+
+
+def task_code(task):
+    url = task.get("url", "")
+    path = urlparse(url).path.rstrip("/")
+    name = task.get("name", "")
+
+    match = re.search(r"/problemset/problem/\d+/([A-Za-z]\d*)$|/(?:contest|gym)/\d+/problem/([A-Za-z]\d*)$", path)
+    if match:
+        return next(group for group in match.groups() if group).lower()
+
+    match = re.search(r"/tasks/[^/]*_([a-z][a-z0-9]*)$", path, re.I)
+    if match:
+        return match.group(1).lower()
+
+    match = re.search(r"#problem/([A-Za-z]\d*)$", url)
+    if match:
+        return match.group(1).lower()
+
+    match = re.match(r"^\s*([A-Z][A-Z0-9]*|[0-9]+)\s*(?:[.):\-–—]|\s+-)\s*", name)
+    if match:
+        return match.group(1).lower()
+
+    # For judges without a stable task letter, use the URL's final path segment.
+    return safe_name(path.split("/")[-1] or name.lower())
+
+
+def choose_stem(task, root):
+    code = task_code(task)
+    sources = {p.stem.lower(): p.stem for p in root.glob("*.cpp") if p.is_file()}
+    if code.lower() in sources:
+        return sources[code.lower()]
+
+    # A single source is unambiguous only for individual-problem parsing, not a batch.
+    if int(task.get("batch", {}).get("size", 1)) == 1 and len(sources) == 1:
+        return next(iter(sources.values()))
+    return code
+
+
+def has_testcase_macro(source):
+    if not source.is_file():
+        return False
+    return any(re.match(r"^\s*#\s*define\s+TESTCASE\b", line)
+               for line in source.read_text(errors="replace").splitlines())
+
+
+def strip_count(sample, index):
+    match = re.match(r"\A\s*(\d+)(?=\s|$)", sample)
+    if not match:
+        raise ValueError(
+            f"sample {index} has no leading testcase count, but {index} was expected "
+            "to contain one because TESTCASE is defined in the source"
+        )
+    count = int(match.group(1))
+    if count < 0:
+        raise ValueError(f"sample {index} has a negative testcase count: {count}")
+    return count, sample[:match.start(1)] + sample[match.end(1):]
+
+
+def normalize(task, stem, root):
+    tests = task.get("tests") or []
+    if not tests:
+        raise ValueError("Competitive Companion sent no sample tests")
+
+    source = root / f"{stem}.cpp"
+    testcase_macro = has_testcase_macro(source)
+    bodies = []
+    total = 0
+    for index, test in enumerate(tests, 1):
+        sample = test.get("input", "")
+        if testcase_macro:
+            count, body = strip_count(sample, index)
+            total += count
+            bodies.append(body.lstrip("\r\n"))
+        else:
+            total += 1
+            bodies.append(sample.lstrip("\r\n"))
+
+    merged = str(total) + "\n" + "".join(
+        body.rstrip("\r\n") + "\n" for body in bodies
+    )
+    return merged, tests, testcase_macro
+
+
+def save_task(task, root):
+    if not isinstance(task, dict) or not isinstance(task.get("tests"), list):
+        raise ValueError("unexpected payload: expected a Competitive Companion task object")
+
+    stem = choose_stem(task, root)
+    tests = task["tests"]
+    sample_dir = root / ".cp-samples" / stem
+    sample_dir.mkdir(parents=True, exist_ok=True)
+
+    # Keep the original payload and every sample so normalization is reversible.
+    (sample_dir / "task.json").write_text(json.dumps(task, ensure_ascii=False, indent=2) + "\n")
+    for i, test in enumerate(tests, 1):
+        (sample_dir / f"{i:02}.in").write_text(test.get("input", ""))
+        (sample_dir / f"{i:02}.out").write_text(test.get("output", ""))
+
+    if not (root / f"{stem}.cpp").is_file():
+        return stem, None, len(tests), None
+
+    merged, _, testcase_macro = normalize(task, stem, root)
+    target = root / f"{stem}.in"
+    target.write_text(merged)
+    return stem, target, len(tests), testcase_macro
+
+
+def normalize_saved(root):
+    count = 0
+    for payload in sorted((root / ".cp-samples").glob("*/task.json")):
+        task = json.loads(payload.read_text())
+        stem = choose_stem(task, root)
+        if not (root / f"{stem}.cpp").is_file():
+            continue
+        merged, tests, _ = normalize(task, stem, root)
+        (root / f"{stem}.in").write_text(merged)
+        print(f"Generated {stem}.in from {len(tests)} sample(s).")
+        count += 1
+    if not count:
+        print("No saved tasks matched a .cpp file in this directory.", file=sys.stderr)
+        return 1
+    return 0
+
+
+class Handler(BaseHTTPRequestHandler):
+    def respond(self, status, body):
+        data = json.dumps(body).encode()
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(data)))
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.end_headers()
+        self.wfile.write(data)
+
+    def do_OPTIONS(self):
+        self.respond(204, {})
+
+    def do_POST(self):
+        if self.path not in ("/", "/task"):
+            self.respond(404, {"error": "use /"})
+            return
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+            if length <= 0 or length > MAX_BODY:
+                raise ValueError(f"invalid request size ({length} bytes)")
+            task = json.loads(self.rfile.read(length))
+            stem, target, count, has_tc = save_task(task, self.server.root)
+            if target is None:
+                message = f"Saved raw samples for {stem}; create/match {stem}.cpp, then run cp-samples --normalize."
+                print(message, flush=True)
+                self.respond(200, {"ok": True, "file": None, "samples": count, "message": message})
+                return
+            mode = "removed per-sample testcase counts" if has_tc else "treated each sample as one testcase"
+            print(f"Saved {target.name}: {count} sample(s); {mode}.", flush=True)
+            self.respond(200, {"ok": True, "file": str(target), "samples": count})
+        except Exception as error:
+            print(f"Rejected sample payload: {error}", file=sys.stderr, flush=True)
+            self.respond(400, {"ok": False, "error": str(error)})
+
+    def log_message(self, fmt, *args):
+        pass
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("directory", nargs="?", default=".", help="problem/contest directory (default: current directory)")
+    parser.add_argument("--port", type=int, default=PORT)
+    parser.add_argument("--normalize", action="store_true", help="regenerate .in files from saved samples")
+    args = parser.parse_args()
+    root = Path(args.directory).expanduser().resolve()
+    if not root.is_dir():
+        parser.error(f"not a directory: {root}")
+    if args.normalize:
+        raise SystemExit(normalize_saved(root))
+
+    server = HTTPServer(("127.0.0.1", args.port), Handler)
+    server.root = root
+    print(f"Competitive Companion receiver listening on http://127.0.0.1:{args.port}/", flush=True)
+    print(f"Output directory: {root}\nPress Ctrl-C to stop.", flush=True)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("\nStopped.", flush=True)
+    finally:
+        server.server_close()
+
+
+if __name__ == "__main__":
+    main()
