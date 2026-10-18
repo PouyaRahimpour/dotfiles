@@ -3,9 +3,9 @@ local M = {}
 function M.setup()
     require("nvim-treesitter.configs").setup({
         -- The parsers below match the languages in the previous configuration.
-        ensure_installed = { "c", "cpp", "python", "java", "lua", "vim" },
+        ensure_installed = {},
         sync_install = false,
-        auto_install = true,
+        auto_install = false,
 
         -- Intentionally preserve your choice not to use Tree-sitter highlighting.
         -- The parsers and folds.scm queries are still used by vim.treesitter.foldexpr().
